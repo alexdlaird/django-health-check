@@ -5,7 +5,7 @@ from health_check.backends import BaseHealthCheckBackend
 from health_check.exceptions import ServiceWarning
 
 
-class TwilioBackendHealthCheck(BaseHealthCheckBackend):
+class TwilioBackend(BaseHealthCheckBackend):
     def __init__(self):
         super().__init__()
         self.services = getattr(self, 'services', [])
