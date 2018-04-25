@@ -115,17 +115,17 @@ and a HTTP 500 if any of the tests failed.
             <tr>
                 <td class="status_1"></td>
                 <td>CacheBackend</td>
-                <td>working</td>
+                <td>operational</td>
             </tr>
             <tr>
                 <td class="status_1"></td>
                 <td>DatabaseBackend</td>
-                <td>working</td>
+                <td>operational</td>
             </tr>
             <tr>
                 <td class="status_1"></td>
                 <td>S3BotoStorageHealthCheck</td>
-                <td>working</td>
+                <td>operational</td>
             </tr>
         </table>
     </div>
@@ -150,9 +150,9 @@ The backend will return a JSON response:
     < Content-Type: application/json
 
     {
-        "CacheBackend": "working",
-        "DatabaseBackend": "working",
-        "S3BotoStorageHealthCheck": "working"
+        "CacheBackend": "operational",
+        "DatabaseBackend": "operational",
+        "S3BotoStorageHealthCheck": "operational"
     }
 
 Optionally, the ``JSON_VERBOSE`` can be set to ``True`` in ``HEALTH_CHECK`` settings to output additional details about

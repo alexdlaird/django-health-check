@@ -37,7 +37,7 @@ class TestBaseHealthCheckBackend:
 
     def test_pretty_status(self):
         ht = BaseHealthCheckBackend()
-        assert ht.pretty_status() == 'working'
+        assert ht.pretty_status() == 'operational'
         ht.errors = ['foo']
         assert ht.pretty_status() == 'foo'
         ht.errors.append('bar')

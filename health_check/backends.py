@@ -24,7 +24,6 @@ class BaseHealthCheckBackend:
         except HealthCheckException as e:
             self.add_error(e, e)
         except BaseException:
-            logger.exception("Unexpected Error!")
             raise
         finally:
             self.time_taken = timer() - start
@@ -47,7 +46,7 @@ class BaseHealthCheckBackend:
     def pretty_status(self):
         if self.errors:
             return "\n".join(str(e) for e in self.errors)
-        return _('working')
+        return _('operational')
 
     @property
     def status(self):
