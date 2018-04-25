@@ -19,4 +19,4 @@ class TestAutoDiscover:
 
     def test_discover_celery_queues(self):
         celery_plugins = [x for x in plugin_dir._registry if issubclass(x[0], CeleryBackend)]
-        assert len(celery_plugins) == len(current_app.amqp.queues)
+        assert len(celery_plugins) == 1

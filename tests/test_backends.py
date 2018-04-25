@@ -16,18 +16,18 @@ class TestBaseHealthCheckBackend:
     def test_identifier(self):
         assert BaseHealthCheckBackend().identifier() == 'BaseHealthCheckBackend'
 
-        class MyHeathCheck(BaseHealthCheckBackend):
+        class MyHealthCheck(BaseHealthCheckBackend):
             pass
 
-        assert MyHeathCheck().identifier() == 'MyHeathCheck'
+        assert MyHealthCheck().identifier() == 'MyHealthCheck'
 
-        class MyHeathCheck(BaseHealthCheckBackend):
+        class MyHealthCheck(BaseHealthCheckBackend):
             foo = 'bar'
 
             def identifier(self):
                 return self.foo
 
-        assert MyHeathCheck().identifier() == 'bar'
+        assert MyHealthCheck().identifier() == 'bar'
 
     def test_status(self):
         ht = BaseHealthCheckBackend()
