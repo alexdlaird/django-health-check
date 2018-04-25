@@ -8,10 +8,10 @@ class HealthCheckConfig(AppConfig):
     name = 'health_check.contrib.celery'
 
     def ready(self):
-        from .backends import CeleryHealthCheck
+        from .backends import CeleryBackend
 
         for queue in current_app.amqp.queues:
-            celery_class_name = 'CeleryHealthCheck' + queue.title()
+            celery_class_name = '{}_{}'.format(CeleryBackend.__class__.__name__, queue.title())
 
-            celery_class = type(celery_class_name, (CeleryHealthCheck,), {'queue': queue})
+            celery_class = type(celery_class_name, (CeleryBackend,), {'queue': queue})
             plugin_dir.register(celery_class)

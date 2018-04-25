@@ -4,7 +4,7 @@ from django.test import TestCase
 
 from health_check.exceptions import ServiceUnavailable
 from health_check.storage.backends import (
-    DefaultFileStorageHealthCheck, StorageHealthCheck
+    DefaultFileStorageBackend, StorageBackend
 )
 
 
@@ -44,8 +44,8 @@ def get_file_content(*args, **kwargs):
     return b'mockcontent'
 
 
-@mock.patch("health_check.storage.backends.StorageHealthCheck.get_file_name", get_file_name)
-@mock.patch("health_check.storage.backends.StorageHealthCheck.get_file_content", get_file_content)
+@mock.patch("health_check.storage.backends.StorageBackend.get_file_name", get_file_name)
+@mock.patch("health_check.storage.backends.StorageBackend.get_file_content", get_file_content)
 class HealthCheckStorageTests(TestCase):
     """
     Tests health check behavior with a mocked storage backend.
@@ -54,19 +54,19 @@ class HealthCheckStorageTests(TestCase):
 
     def test_get_storage(self):
         """Test get_storage method returns None on the base class, but a Storage instance on default."""
-        base_storage = StorageHealthCheck()
+        base_storage = StorageBackend()
         self.assertIsNone(base_storage.get_storage())
 
-        default_storage = DefaultFileStorageHealthCheck()
+        default_storage = DefaultFileStorageBackend()
         self.assertIsInstance(default_storage.get_storage(), Storage)
 
     @mock.patch(
-        "health_check.storage.backends.DefaultFileStorageHealthCheck.storage",
+        "health_check.storage.backends.DefaultFileStorageBackend.storage",
         MockStorage()
     )
     def test_check_status_working(self):
         """Test check_status returns True when storage is working properly."""
-        default_storage_health = DefaultFileStorageHealthCheck()
+        default_storage_health = DefaultFileStorageBackend()
 
         default_storage = default_storage_health.get_storage()
 
@@ -79,21 +79,21 @@ class HealthCheckStorageTests(TestCase):
             self.assertTrue(default_storage_health.check_status())
 
     @mock.patch(
-        "health_check.storage.backends.DefaultFileStorageHealthCheck.storage",
+        "health_check.storage.backends.DefaultFileStorageBackend.storage",
         MockStorage(saves=False)
     )
     def test_file_does_not_exist(self):
         """Test check_status raises ServiceUnavailable when file is not saved."""
-        default_storage_health = DefaultFileStorageHealthCheck()
+        default_storage_health = DefaultFileStorageBackend()
         with self.assertRaises(ServiceUnavailable):
             default_storage_health.check_status()
 
     @mock.patch(
-        "health_check.storage.backends.DefaultFileStorageHealthCheck.storage",
+        "health_check.storage.backends.DefaultFileStorageBackend.storage",
         MockStorage(deletes=False)
     )
     def test_file_not_deleted(self):
         """Test check_status raises ServiceUnavailable when file is not deleted."""
-        default_storage_health = DefaultFileStorageHealthCheck()
+        default_storage_health = DefaultFileStorageBackend()
         with self.assertRaises(ServiceUnavailable):
             default_storage_health.check_status()

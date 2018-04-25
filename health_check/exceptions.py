@@ -2,7 +2,7 @@ from django.utils.translation import ugettext_lazy as _
 
 
 class HealthCheckException(Exception):
-    message_type = _("unknown error")
+    message_type = _("unknown type")
 
     def __init__(self, message):
         self.message = message

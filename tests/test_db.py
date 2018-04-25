@@ -51,7 +51,7 @@ class HealthCheckDatabaseTests(TestCase):
         db_backend = DatabaseBackend()
         db_backend.run_check()
         self.assertTrue(db_backend.errors)
-        self.assertIn('unexpected result: Integrity Error', db_backend.pretty_status())
+        self.assertIn('unexpected result: Integrity error', db_backend.pretty_status())
 
     @patch('health_check.db.backends.TestModel.objects.create',
            lambda title=None: MockDBModel(error_thrown=DatabaseError))

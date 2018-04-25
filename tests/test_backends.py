@@ -54,12 +54,12 @@ class TestBaseHealthCheckBackend:
         ht = BaseHealthCheckBackend()
         ht.add_error('bar')
         assert isinstance(ht.errors[0], HealthCheckException)
-        assert str(ht.errors[0]) == 'unknown error: bar'
+        assert str(ht.errors[0]) == 'unknown type: bar'
 
         ht = BaseHealthCheckBackend()
         ht.add_error(type)
         assert isinstance(ht.errors[0], HealthCheckException)
-        assert str(ht.errors[0]) == 'unknown error: unknown error'
+        assert str(ht.errors[0]) == 'unknown type: unknown error'
 
     def test_add_error_cause(self):
         ht = BaseHealthCheckBackend()

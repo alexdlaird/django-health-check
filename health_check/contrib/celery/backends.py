@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.utils.translation import ugettext_lazy as _
 
 from health_check.backends import BaseHealthCheckBackend
 from health_check.exceptions import (
@@ -8,7 +9,7 @@ from health_check.exceptions import (
 from .tasks import add
 
 
-class CeleryHealthCheck(BaseHealthCheckBackend):
+class CeleryBackend(BaseHealthCheckBackend):
     def check_status(self):
         timeout = getattr(settings, 'HEALTHCHECK_CELERY_TIMEOUT', 3)
 

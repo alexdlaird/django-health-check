@@ -10,15 +10,15 @@ from health_check.backends import BaseHealthCheckBackend
 from health_check.exceptions import ServiceUnavailable
 
 
-class StorageHealthCheck(BaseHealthCheckBackend):
+class StorageBackend(BaseHealthCheckBackend):
     """
     Tests the status of a `StorageBackend`.
 
     Can be extended to test any storage backend by subclassing:
 
-        class MyStorageHealthCheck(StorageHealthCheck):
+        class MyStorageBackend(StorageBackend):
             storage = 'some.other.StorageBackend'
-        plugin_dir.register(MyStorageHealthCheck)
+        plugin_dir.register(MyStorageBackend)
 
     storage must be either a string pointing to a storage class
     (e.g 'django.core.files.storage.FileSystemStorage') or a Storage instance.
@@ -70,8 +70,8 @@ class StorageHealthCheck(BaseHealthCheckBackend):
             self.check_delete(file_name)
             return True
         except Exception:
-            raise ServiceUnavailable('Unknown exception')
+            raise ServiceUnavailable('Unknown error')
 
 
-class DefaultFileStorageHealthCheck(StorageHealthCheck):
+class DefaultFileStorageBackend(StorageBackend):
     storage = settings.DEFAULT_FILE_STORAGE
