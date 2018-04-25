@@ -1,11 +1,9 @@
 from django.conf import settings
-from django.utils.translation import ugettext_lazy as _
 
 from health_check.backends import BaseHealthCheckBackend
 from health_check.exceptions import (
     ServiceReturnedUnexpectedResult, ServiceUnavailable
 )
-
 from .tasks import add
 
 
