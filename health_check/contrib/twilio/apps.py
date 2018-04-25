@@ -4,7 +4,7 @@ from health_check.plugins import plugin_dir
 
 
 class HealthCheckConfig(AppConfig):
-    name = 'health_check.contrib.twilio_storage'
+    name = 'health_check.contrib.twilio'
 
     def ready(self):
         from .backends import TwilioBackend
