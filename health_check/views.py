@@ -6,6 +6,7 @@ from django.http import JsonResponse
 from django.utils.translation import ugettext_lazy as _
 from django.views.decorators.cache import never_cache
 from django.views.generic import TemplateView
+from health_check.exceptions import ServiceWarning
 
 from health_check.plugins import plugin_dir
 
@@ -56,8 +57,12 @@ class MainView(TemplateView):
                 }
                 plugin_severity = p.highest_severity()
                 if plugin_severity < highest_severity:
-                    highest_severity = plugin_severity
-                    system_status = components[str(p.identifier())]["status"]
+                    if p.critical:
+                        highest_severity = plugin_severity
+                        system_status = components[str(p.identifier())]["status"]
+                    else:
+                        highest_severity = ServiceWarning.severity
+                        system_status = ServiceWarning.identifier
 
             return JsonResponse(
                 {
