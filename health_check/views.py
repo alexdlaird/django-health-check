@@ -3,6 +3,7 @@ from concurrent.futures import ThreadPoolExecutor
 
 from django.conf import settings
 from django.http import JsonResponse
+from django.utils.translation import ugettext_lazy as _
 from django.views.decorators.cache import never_cache
 from django.views.generic import TemplateView
 
@@ -32,7 +33,7 @@ class MainView(TemplateView):
         status_code = 500 if errors else 200
 
         if 'application/json' in request.META.get('HTTP_ACCEPT', '') or \
-            getattr(settings, 'HEALTHCHECK_JSON_RESPONSE_ONLY', False):
+           getattr(settings, 'HEALTHCHECK_JSON_RESPONSE_ONLY', False):
             return self.render_to_response_json(plugins, status_code)
 
         context = {'plugins': plugins,
@@ -43,14 +44,25 @@ class MainView(TemplateView):
 
     def render_to_response_json(self, plugins, status_code):
         if getattr(settings, 'HEALTHCHECK_JSON_STATUS', False):
+            components = {}
+            highest_severity = 999
+            system_status = _('operational')
+            for p in plugins:
+                components[str(p.identifier())] = {
+                    "status": p.sensitive_status() if getattr(settings, 'HEALTHCHECK_SENSITIVE_STATUSES',
+                                                              False) else p.pretty_status(),
+                    "description": p.description,
+                    "took": round(p.time_taken, 4)
+                }
+                if p.highest_severity() < highest_severity:
+                    highest_severity = p.highest_severity
+                    system_status = components[str(p.identifier())]["status"]
+
             return JsonResponse(
                 {
-                    str(p.identifier()): {
-                        "status": p.sensitive_status() if getattr(settings, 'HEALTHCHECK_SENSITIVE_STATUSES',
-                                                                  False) else p.pretty_status(),
-                        "took": round(p.time_taken, 4)
-                    } for p in plugins
-                    },
+                    "components": components,
+                    "status": system_status
+                },
                 status=status_code
             )
         else:

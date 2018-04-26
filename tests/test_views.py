@@ -38,8 +38,9 @@ class TestMainView:
         plugin_dir.register(JSONSuccessBackend)
         response = client.get(self.url, HTTP_ACCEPT='application/json')
         assert response.status_code == 200, response.content.decode('utf-8')
-        assert json.loads(response.content.decode('utf-8')) == \
-            {JSONSuccessBackend().identifier(): JSONSuccessBackend().pretty_status()}
+        assert json.loads(response.content.decode('utf-8')) == {
+            JSONSuccessBackend().identifier(): JSONSuccessBackend().pretty_status()
+        }
 
     def test_error_json(self, client):
         class JSONErrorBackend(BaseHealthCheckBackend):
@@ -54,6 +55,7 @@ class TestMainView:
 
     def test_success_json_verbose(self, client):
         settings.HEALTHCHECK_JSON_STATUS = True
+        settings.HEALTHCHECK_SENSITIVE_STATUSES = True
 
         class JSONSuccessBackend(BaseHealthCheckBackend):
             def run_check(self):
@@ -63,5 +65,9 @@ class TestMainView:
         plugin_dir.register(JSONSuccessBackend)
         response = client.get(self.url, HTTP_ACCEPT='application/json')
         assert response.status_code == 200, response.content.decode('utf-8')
-        assert json.loads(response.content.decode('utf-8')) == \
-            {JSONSuccessBackend().identifier(): {"status": JSONSuccessBackend().pretty_status(), "took": 2.1235}}
+        assert json.loads(response.content.decode('utf-8')) == {
+            "components": {
+                JSONSuccessBackend().identifier(): {"status": "operational", "description": "", "took": 2.1235}
+            },
+            "status": "operational"
+        }

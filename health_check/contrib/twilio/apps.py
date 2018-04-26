@@ -18,4 +18,3 @@ class HealthCheckConfig(AppConfig):
                 plugin_dir.register(celery_class)
         else:
             plugin_dir.register(TwilioBackend)
-

@@ -37,7 +37,7 @@ class TestBaseHealthCheckBackend:
 
     def test_pretty_status(self):
         ht = BaseHealthCheckBackend()
-        assert ht.pretty_status() == 'operational'
+        assert ht.pretty_status() == 'working'
         ht.errors = ['foo']
         assert ht.pretty_status() == 'foo'
         ht.errors.append('bar')
@@ -54,12 +54,12 @@ class TestBaseHealthCheckBackend:
         ht = BaseHealthCheckBackend()
         ht.add_error('bar')
         assert isinstance(ht.errors[0], HealthCheckException)
-        assert str(ht.errors[0]) == 'unknown type: bar'
+        assert str(ht.errors[0]) == 'unknown error: bar'
 
         ht = BaseHealthCheckBackend()
         ht.add_error(type)
         assert isinstance(ht.errors[0], HealthCheckException)
-        assert str(ht.errors[0]) == 'unknown type: unknown error'
+        assert str(ht.errors[0]) == 'unknown error: unknown error'
 
     def test_add_error_cause(self):
         ht = BaseHealthCheckBackend()

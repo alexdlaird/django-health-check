@@ -7,7 +7,7 @@ from health_check.exceptions import (
 from .tasks import add
 
 
-class CeleryBackend(BaseHealthCheckBackend):
+class CeleryHealthCheck(BaseHealthCheckBackend):
     def check_status(self):
         timeout = getattr(settings, 'HEALTHCHECK_CELERY_TIMEOUT', 3)
 

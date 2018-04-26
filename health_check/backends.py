@@ -3,7 +3,7 @@ from timeit import default_timer as timer
 
 from django.utils.translation import ugettext_lazy as _
 
-from health_check.exceptions import HealthCheckException, ServiceUnavailable, ServiceReturnedUnexpectedResult
+from health_check.exceptions import HealthCheckException
 
 logger = logging.getLogger('health-check')
 
@@ -12,6 +12,7 @@ class BaseHealthCheckBackend:
     def __init__(self):
         self.errors = []
         self.critical = getattr(self, 'critical', True)
+        self.description = getattr(self, 'description', '')
 
     def check_status(self):
         raise NotImplementedError
@@ -24,6 +25,7 @@ class BaseHealthCheckBackend:
         except HealthCheckException as e:
             self.add_error(e, e)
         except BaseException:
+            logger.exception("Unexpected Error!")
             raise
         finally:
             self.time_taken = timer() - start
@@ -50,15 +52,19 @@ class BaseHealthCheckBackend:
 
     def sensitive_status(self):
         status = _('operational')
+        severity = 999
         for error in self.errors:
-            if isinstance(error, ServiceUnavailable):
-                status = 'major_outage'
-                break
-            elif isinstance(error, ServiceReturnedUnexpectedResult):
-                status = 'minor_outage'
-            elif status != 'minor_outage':
-                status = 'degraded_performance'
+            if isinstance(error, HealthCheckException) and error.severity < severity:
+                severity = error.severity
+                status = error.identifier
         return status
+
+    def highest_severity(self):
+        severity = 999
+        for error in self.errors:
+            if isinstance(error, HealthCheckException) and error.severity < severity:
+                severity = error.severity
+        return severity
 
     @property
     def status(self):

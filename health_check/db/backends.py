@@ -17,6 +17,6 @@ class DatabaseBackend(BaseHealthCheckBackend):
             obj.save()
             obj.delete()
         except IntegrityError as e:
-            self.add_error(ServiceReturnedUnexpectedResult("Integrity error"), e)
+            self.add_error(ServiceReturnedUnexpectedResult("Integrity Error"), e)
         except DatabaseError as e:
             self.add_error(ServiceUnavailable("Database error"), e)

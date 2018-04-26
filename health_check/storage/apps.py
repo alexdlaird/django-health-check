@@ -7,5 +7,5 @@ class HealthCheckConfig(AppConfig):
     name = 'health_check.storage'
 
     def ready(self):
-        from .backends import DefaultFileStorageBackend
-        plugin_dir.register(DefaultFileStorageBackend)
+        from .backends import DefaultFileStorageHealthCheck
+        plugin_dir.register(DefaultFileStorageHealthCheck)

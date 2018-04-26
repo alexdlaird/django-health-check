@@ -115,17 +115,17 @@ and a HTTP 500 if any of the tests failed.
             <tr>
                 <td class="status_1"></td>
                 <td>CacheBackend</td>
-                <td>operational</td>
+                <td>working</td>
             </tr>
             <tr>
                 <td class="status_1"></td>
                 <td>DatabaseBackend</td>
-                <td>operational</td>
+                <td>working</td>
             </tr>
             <tr>
                 <td class="status_1"></td>
                 <td>S3BotoStorageHealthCheck</td>
-                <td>operational</td>
+                <td>working</td>
             </tr>
         </table>
     </div>
@@ -150,9 +150,9 @@ The backend will return a JSON response:
     < Content-Type: application/json
 
     {
-        "CacheBackend": "operational",
-        "DatabaseBackend": "operational",
-        "S3BotoStorageHealthCheck": "operational"
+        "CacheBackend": "working",
+        "DatabaseBackend": "working",
+        "S3BotoStorageHealthCheck": "working"
     }
 
 Optionally, the ``HEALTHCHECK_JSON_RESPONSE_ONLY`` can be set to ``True`` in settings to output additional details about
@@ -174,9 +174,9 @@ If you would like to customize an existing health check, for instance by changin
         name = 'my_app'
 
         def ready(self):
-            from health_check.contrib.s3boto_storage.backends import S3BotoStorageBackend
-            plugin_dir.reregister(S3BotoStorageBackend.__name__,
-                                  type('S3Backend', (S3BotoStorageBackend,), {'critical': False}))
+            from health_check.contrib.s3boto_storage.backends import S3BotoStorageHealthCheck
+            plugin_dir.reregister(S3BotoStorageHealthCheck.__name__,
+                                  type('S3Backend', (S3BotoStorageHealthCheck,), {'critical': False, 'description': 'Attachment storage'}))
 
 
 Writing a custom health check

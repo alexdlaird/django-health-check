@@ -1,9 +1,9 @@
 import logging
 
-from health_check.storage.backends import StorageBackend
+from health_check.storage.backends import StorageHealthCheck
 
 
-class S3Boto3StorageBackend(StorageBackend):
+class S3Boto3StorageHealthCheck(StorageHealthCheck):
     """
     Tests the status of a `S3BotoStorage` file storage backend.
 

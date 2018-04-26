@@ -7,5 +7,5 @@ class HealthCheckConfig(AppConfig):
     name = 'health_check.contrib.s3boto3_storage'
 
     def ready(self):
-        from .backends import S3Boto3StorageBackend
-        plugin_dir.register(S3Boto3StorageBackend)
+        from .backends import S3Boto3StorageHealthCheck
+        plugin_dir.register(S3Boto3StorageHealthCheck)
