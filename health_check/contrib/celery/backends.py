@@ -1,4 +1,3 @@
-from celery import current_app
 from django.conf import settings
 
 from health_check.backends import BaseHealthCheckBackend
@@ -13,7 +12,7 @@ class CeleryBackend(BaseHealthCheckBackend):
         timeout = getattr(settings, 'HEALTHCHECK_CELERY_TIMEOUT', 3)
 
         try:
-            for queue in current_app.amqp.queues:
+            for queue in self.queues:
                 result = add.apply_async(
                     args=[4, 4],
                     expires=timeout,
