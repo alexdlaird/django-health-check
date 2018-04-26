@@ -32,10 +32,12 @@ class MainView(TemplateView):
         status_code = 500 if errors else 200
 
         if 'application/json' in request.META.get('HTTP_ACCEPT', '') or \
-           getattr(settings, 'HEALTHCHECK_JSON_RESPONSE_ONLY', False):
+            getattr(settings, 'HEALTHCHECK_JSON_RESPONSE_ONLY', False):
             return self.render_to_response_json(plugins, status_code)
 
-        context = {'plugins': plugins, 'status_code': status_code}
+        context = {'plugins': plugins,
+                   'sensitive': getattr(settings, 'HEALTHCHECK_SENSITIVE_STATUSES', False),
+                   'status_code': status_code}
 
         return self.render_to_response(context, status=status_code)
 
@@ -44,10 +46,11 @@ class MainView(TemplateView):
             return JsonResponse(
                 {
                     str(p.identifier()): {
-                        "status": str(p.pretty_status()),
+                        "status": p.sensitive_status() if getattr(settings, 'HEALTHCHECK_SENSITIVE_STATUSES',
+                                                                  False) else p.pretty_status(),
                         "took": round(p.time_taken, 4)
                     } for p in plugins
-                },
+                    },
                 status=status_code
             )
         else:
