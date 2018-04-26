@@ -8,13 +8,13 @@ class HealthCheckConfig(AppConfig):
     name = 'health_check.contrib.twilio'
 
     def ready(self):
-        from .backends import TwilioBackend
+        from .backends import TwilioHealthCheck
 
         if getattr(settings, 'HEALTHCHECK_FANOUT_BACKENDS', True):
             for service in getattr(settings, 'HEALTHCHECK_TWILIO_SERVICES', ['SMS', 'Phone Numbers']):
-                celery_class_name = '{}:{}'.format(TwilioBackend.__name__, service.replace(' ', ''))
+                celery_class_name = '{}:{}'.format(TwilioHealthCheck.__name__, service.replace(' ', ''))
 
-                celery_class = type(celery_class_name, (TwilioBackend,), {'queues': [service]})
+                celery_class = type(celery_class_name, (TwilioHealthCheck,), {'queues': [service]})
                 plugin_dir.register(celery_class)
         else:
-            plugin_dir.register(TwilioBackend)
+            plugin_dir.register(TwilioHealthCheck)
