@@ -17,7 +17,7 @@ class TwilioBackend(BaseHealthCheckBackend):
             for component in data['components']:
                 if component['name'] in self.services and component['status'] != 'operational':
                     self.add_error(ServiceWarning(
-                        '{}: {}'.format(component['name'], component['status'])))
+                        '{} - {}'.format(component['name'], component['status'])))
         else:
             response = urllib.request.urlopen('https://gpkpyklzq55q.statuspage.io/api/v2/status.json')
             data = json.loads(response.read().decode('utf-8'))
