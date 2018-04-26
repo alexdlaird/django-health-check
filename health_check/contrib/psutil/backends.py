@@ -31,9 +31,6 @@ class DiskUsage(BaseHealthCheckBackend):
         except ValueError as e:
             self.add_error(ServiceReturnedUnexpectedResult("ValueError"), e)
 
-    def sensitive_status(self):
-        return self.pretty_status()
-
 
 class MemoryUsage(BaseHealthCheckBackend):
     def check_status(self):
@@ -49,6 +46,3 @@ class MemoryUsage(BaseHealthCheckBackend):
                 )
         except ValueError as e:
             self.add_error(ServiceReturnedUnexpectedResult("ValueError"), e)
-
-    def sensitive_status(self):
-        return self.pretty_status()
