@@ -1,7 +1,5 @@
 import json
 
-from django.conf import settings
-
 from health_check.backends import BaseHealthCheckBackend
 from health_check.plugins import plugin_dir
 
@@ -29,6 +27,22 @@ class TestMainView:
         assert response.status_code == 500, response.content.decode('utf-8')
         assert b'Super Fail!' in response.content
 
+    def test_error_uncritical(self, client):
+        class MyBackend(BaseHealthCheckBackend):
+            critical = False
+
+            def __init__(self):
+                super().__init__()
+
+            def run_check(self):
+                self.add_error('No fail, since not critical!')
+
+        plugin_dir.reset()
+        plugin_dir.register(MyBackend)
+        response = client.get(self.url, HTTP_ACCEPT='application/json')
+        assert response.status_code == 200, response.content.decode('utf-8')
+        assert b'not critical' in response.content
+
     def test_success_json(self, client):
         class JSONSuccessBackend(BaseHealthCheckBackend):
             def run_check(self):
@@ -52,22 +66,3 @@ class TestMainView:
         response = client.get(self.url, HTTP_ACCEPT='application/json')
         assert response.status_code == 500, response.content.decode('utf-8')
         assert 'JSON Error' in json.loads(response.content.decode('utf-8'))[JSONErrorBackend().identifier()]
-
-    def test_success_json_verbose(self, client):
-        settings.HEALTHCHECK_JSON_STATUS = True
-        settings.HEALTHCHECK_SENSITIVE_STATUSES = True
-
-        class JSONSuccessBackend(BaseHealthCheckBackend):
-            def run_check(self):
-                self.time_taken = 2.1234567
-
-        plugin_dir.reset()
-        plugin_dir.register(JSONSuccessBackend)
-        response = client.get(self.url, HTTP_ACCEPT='application/json')
-        assert response.status_code == 200, response.content.decode('utf-8')
-        assert json.loads(response.content.decode('utf-8')) == {
-            "components": {
-                JSONSuccessBackend().identifier(): {"status": "operational", "description": "", "took": 2.1235}
-            },
-            "status": "operational"
-        }

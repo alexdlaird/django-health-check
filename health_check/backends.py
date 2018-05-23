@@ -9,10 +9,13 @@ logger = logging.getLogger('health-check')
 
 
 class BaseHealthCheckBackend:
+    critical = True
+    description = ''
+
     def __init__(self):
+        self._identifier = self.__class__.__name__
+
         self.errors = []
-        self.critical = getattr(self, 'critical', True)
-        self.description = getattr(self, 'description', '')
 
     def check_status(self):
         raise NotImplementedError
@@ -45,8 +48,8 @@ class BaseHealthCheckBackend:
             logger.error(str(error))
         self.errors.append(error)
 
-    def pretty_status(self):
-        if self.errors:
+    def pretty_status(self, hide_uncritical=False):
+        if not hide_uncritical and self.errors:
             return "\n".join(str(e) for e in self.errors)
         return _('working')
 
@@ -71,4 +74,4 @@ class BaseHealthCheckBackend:
         return int(not self.errors)
 
     def identifier(self):
-        return self.__class__.__name__
+        return self._identifier

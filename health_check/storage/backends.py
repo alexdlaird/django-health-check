@@ -7,7 +7,7 @@ from django.core.files.storage import get_storage_class
 from django.utils.six import string_types
 
 from health_check.backends import BaseHealthCheckBackend
-from health_check.exceptions import ServiceUnavailable, HealthCheckException
+from health_check.exceptions import HealthCheckException, ServiceUnavailable
 
 
 class StorageHealthCheck(BaseHealthCheckBackend):

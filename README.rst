@@ -18,7 +18,9 @@ The following health checks are bundled with this project:
 
 Writing your own custom health checks is also very quick and easy.
 
-We also like contributions, so don't be afraid to make a pull request.
+We also like contributions, so don't be afraid to make a pull request. Just be
+sure to test everything by installing and running ``tox`` before submitting the
+pull request.
 
 Use Cases
 ---------
@@ -155,29 +157,6 @@ The backend will return a JSON response:
         "S3BotoStorageHealthCheck": "working"
     }
 
-Optionally, the ``HEALTHCHECK_JSON_RESPONSE_ONLY`` can be set to ``True`` in settings to output additional details about
-each plugin (for instance, response time).
-
-Overriding a health check
--------------------------
-
-If you would like to customize an existing health check, for instance by changing its name or overriding its
-``critical`` flag, you can do so by adding something similar to the following to your own AppConfig.
-
-.. code:: python
-
-    from django.apps import AppConfig
-
-    from health_check.plugins import plugin_dir
-
-    class MyAppConfig(AppConfig):
-        name = 'my_app'
-
-        def ready(self):
-            from health_check.contrib.s3boto_storage.backends import S3BotoStorageHealthCheck
-            plugin_dir.reregister(S3BotoStorageHealthCheck.__name__,
-                                  type('S3Backend', (S3BotoStorageHealthCheck,), {'critical': False, 'description': 'Attachment storage'}))
-
 
 Writing a custom health check
 -----------------------------
@@ -189,14 +168,21 @@ Writing a health check is quick and easy:
     from health_check.backends import BaseHealthCheckBackend
 
     class MyHealthCheckBackend(BaseHealthCheckBackend):
+        # A useful description of the health check's purpose, which
+        # can be when the status is returned.
+        description = 'An awesome and useful health check!'
+
+        # This flag indicates whether or not this plugin
+        # failing with errors represents a critical health failure.
+        # If False, a failure on this plugin will still
+        # allow a status_code of 200 to be returned
+        critical = False
+
         def __init__(self):
             super().__init__()
 
-            # This flag indicates whether or not this plugin
-            # failing represents a critical health failure.
-            # If False,  a failure on this plugin will still
-            # allow a status_code of 200 to be returned
-            self.critical = False
+            # Display name on the endpoint.
+            self.identifier = 'My HealthCheck'
 
         def check_status(self):
             # The test code goes here.

@@ -14,3 +14,4 @@
 .eggs
 /docs/_build
 .pytest_cache
+ChangeLog
