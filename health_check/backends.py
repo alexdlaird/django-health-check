@@ -16,6 +16,7 @@ class BaseHealthCheckBackend:
         self._identifier = self.__class__.__name__
 
         self.errors = []
+        self.severity = HealthCheckException.level, HealthCheckException.message_type
 
     def check_status(self):
         raise NotImplementedError
@@ -48,26 +49,13 @@ class BaseHealthCheckBackend:
             logger.error(str(error))
         self.errors.append(error)
 
-    def pretty_status(self, hide_uncritical=False):
-        if not hide_uncritical and self.errors:
+        if error.level < self.severity[0]:
+            self.severity = error.level, error.message_type
+
+    def pretty_status(self):
+        if self.errors:
             return "\n".join(str(e) for e in self.errors)
         return _('working')
-
-    def sensitive_status(self):
-        status = _('operational')
-        severity = 999
-        for error in self.errors:
-            if isinstance(error, HealthCheckException) and error.severity < severity:
-                severity = error.severity
-                status = error.identifier
-        return status
-
-    def highest_severity(self):
-        severity = 999
-        for error in self.errors:
-            if isinstance(error, HealthCheckException) and error.severity < severity:
-                severity = error.severity
-        return severity
 
     @property
     def status(self):

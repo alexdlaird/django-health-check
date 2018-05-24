@@ -2,7 +2,7 @@ from django.utils.translation import ugettext_lazy as _
 
 
 class HealthCheckException(Exception):
-    severity = 3
+    level = 4
     message_type = _("unknown error")
     identifier = _("unknown")
 
@@ -14,18 +14,18 @@ class HealthCheckException(Exception):
 
 
 class ServiceWarning(HealthCheckException):
-    severity = 3
+    level = 3
     message_type = _("warning")
     identifier = _("degraded_performance")
 
 
 class ServiceUnavailable(HealthCheckException):
-    severity = 1
+    level = 1
     message_type = _("unavailable")
     identifier = _("major_outage")
 
 
 class ServiceReturnedUnexpectedResult(HealthCheckException):
-    severity = 2
+    level = 2
     message_type = _("unexpected result")
     identifier = _("minor_outage")
