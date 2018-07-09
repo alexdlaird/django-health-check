@@ -16,7 +16,7 @@ class BaseHealthCheckBackend:
         self._identifier = self.__class__.__name__
 
         self.errors = []
-        self.severity = HealthCheckException.level, HealthCheckException.message_type
+        self.severity = HealthCheckException.level, HealthCheckException.identifier
 
     def check_status(self):
         raise NotImplementedError
@@ -50,7 +50,7 @@ class BaseHealthCheckBackend:
         self.errors.append(error)
 
         if error.level < self.severity[0]:
-            self.severity = error.level, error.message_type
+            self.severity = error.level, error.identifier
 
     def pretty_status(self):
         if self.errors:

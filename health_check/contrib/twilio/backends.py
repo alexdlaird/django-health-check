@@ -1,5 +1,5 @@
 import json
-import urllib.request
+from urllib.request import urlopen
 
 from django.conf import settings
 
@@ -20,14 +20,14 @@ class TwilioHealthCheck(BaseHealthCheckBackend):
 
         try:
             if len(self.services) > 0:
-                response = urllib.request.urlopen(TwilioHealthCheck.TWILIO_SUMMARY_URL, timeout=timeout)
+                response = urlopen(TwilioHealthCheck.TWILIO_SUMMARY_URL, timeout=timeout)
                 data = json.loads(response.read().decode('utf-8'))
                 for component in data['components']:
                     if component['name'] in self.services and component['status'] != 'operational':
                         self.add_error(ServiceWarning(
                             '{} - {}'.format(component['name'], component['status'])))
             else:
-                response = urllib.request.urlopen(TwilioHealthCheck.TWILIO_STATUS_URL, timeout=timeout)
+                response = urlopen(TwilioHealthCheck.TWILIO_STATUS_URL, timeout=timeout)
                 data = json.loads(response.read().decode('utf-8'))
                 if data['status']['indicator'] != 'none':
                     self.add_error(ServiceWarning(data['status']['indicator']))
