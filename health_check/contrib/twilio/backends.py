@@ -16,7 +16,7 @@ class TwilioHealthCheck(BaseHealthCheckBackend):
         self.services = getattr(self, 'services', [])
 
     def check_status(self):
-        timeout = getattr(settings, 'HEALTHCHECK_TWILIO_TIMEOUT', 5)
+        timeout = getattr(settings, 'HEALTHCHECK_TWILIO_TIMEOUT', 10)
 
         try:
             if len(self.services) > 0:
